@@ -4,6 +4,15 @@ import { useEffect, useState } from "react";
 
 const MIN_CITY_CHARS = 3;
 
+let timeoutId: ReturnType<typeof setTimeout>;
+
+const debounce = (fn: Function, ms = 300) => {
+  return function (this: any, ...args: any[]) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn.apply(this, args), ms);
+  }
+}
+
 export default function SearchBox() {
   const [inputValue, setInputValue] = useState("");
   const [cities, setCities] = useState<CityData[]>([]);
@@ -20,7 +29,7 @@ export default function SearchBox() {
     }
 
     if (inputValue.length >= MIN_CITY_CHARS) {
-      fetchData();
+      debounce(fetchData)();
     }
   }, [inputValue])
 
